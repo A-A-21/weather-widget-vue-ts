@@ -5,14 +5,22 @@
         src="@/assets/icons8-привод-64.png"
         alt="settings"/>
     </button>
-    <div class="weather-card__place">{{ place }}</div>
-    <div class="weather-card__descriptions">{{ weatherInfo.descriptions }}
-      <div class="weather-card__conditions">{{ weatherInfo.degree }}° C</div>
-      <div>Feels like: {{ weatherInfo.feels_like }}</div>
-      <div>Wind: {{ weatherInfo.wind }} m/s</div>
-      visibility: {{ getFormatedVisibility() }}
+    <div class="weather-card__main">
+      <div>{{ place }}</div>
+      <div class="weather-card__details">
+        <div>{{ weatherInfo.degree }}° C</div>
+        <div>Feels like: {{ weatherInfo.feels_like }}</div>
+        <div>Wind: {{ weatherInfo.wind }} m/s</div>
+        <div>
+          visibility: {{ getFormatedVisibility() }}
+        </div>
+      </div>
     </div>
-    <img :src="iconSrc" alt="iconCode"/>
+    <div class="weather-card__icon">
+      <img :src="iconSrc" alt="iconCode"/>
+      <div class="weather-card__details">{{ weatherInfo.descriptions }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,9 +39,6 @@ const props = defineProps({
 const emits = defineEmits(['setError', 'setViewWeather']);
 
 const place = ref<string>('');
-const degree = ref<number>(0);
-const descriptions = ref<string>('');
-const visibility = ref<number>(0);
 const iconSrc = ref<string>('');
 const weatherInfo = ref<IWeatherInfo>({
   feels_like: 0,
@@ -89,9 +94,6 @@ async function initWeather(): Promise<void> {
 
     iconSrc.value = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
     place.value = `${geoData.name}, ${geoData.country}`;
-    // degree.value = weatherData.main.temp;
-    // descriptions.value = weatherData.weather[0].description;
-    // visibility.value = weatherData.visibility;
 
     weatherInfo.value = {
       feels_like: weatherData.main.feels_like,
@@ -114,11 +116,16 @@ onMounted(() => {
 .weather-card {
   border: 1px solid blue;
   border-radius: 5px;
-  width: 200px;
+  width: 248px;
   background-color: deepskyblue;
   position: relative;
+  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
 
-  &__descriptions {
+  &__details {
     font-size: 12px;
   }
 
