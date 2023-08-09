@@ -17,7 +17,10 @@
                     :index="index"></SettingsCard>
     </div>
     <div class="main-settings__foot">
-      <div>Add Location</div>
+      <div>
+        <span>Add Location</span>
+        <span v-if="error" class="main-settings__error">Incorrect data</span>
+      </div>
       <div class="main-settings__foot-form">
         <input v-model="newCity" placeholder="Search"/>
         <button @click="saveHandler"><img src="../assets/icons8-введите-ключ-32.png" alt="enter"/>
@@ -40,18 +43,18 @@ const props = defineProps({
 const emits = defineEmits(['setViewWeather', 'setCities']);
 
 const newCity = ref<string>('');
-
+const error = ref<boolean>(false);
 const dragIndex = ref<number | null>(null);
 
-const handleDragStart = (index: number): void => {
+function handleDragStart(index: number): void {
   dragIndex.value = index;
-};
+}
 
-const handleDragOver = (event: DragEvent): void => {
+function handleDragOver(event: DragEvent): void {
   event.preventDefault();
-};
+}
 
-const handleDragEnter = (index: number): void => {
+function handleDragEnter(index: number): void {
   if (dragIndex.value !== index && dragIndex.value !== null) {
     const newCities: string[] = [...props.cities];
     const draggedItem = newCities.splice(dragIndex.value, 1)[0];
@@ -60,21 +63,40 @@ const handleDragEnter = (index: number): void => {
     dragIndex.value = index;
     emits('setCities', newCities);
   }
-};
+}
 
-const handleDrop = (event: DragEvent): void => {
+function handleDrop(event: DragEvent): void {
   event.preventDefault();
-};
+}
 
-const handleDragEnd = (): void => {
+function handleDragEnd(): void {
   dragIndex.value = null;
-};
+}
 
-function saveHandler(): void {
-  const newCities: string[] = [...props.cities];
-  newCities.push(newCity.value);
-  emits('setCities', newCities);
-  newCity.value = '';
+async function isValidCity(city: string): Promise<boolean> {
+  try {
+    const response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=5cb0432d478dac0bfabaaae53d6b5e94`);
+    const data = await response.json();
+    return !!data.length;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+async function saveHandler(): Promise<void> {
+  const isValid = await isValidCity(newCity.value);
+  if (isValid) {
+    const newCities: string[] = [...props.cities];
+    newCities.push(newCity.value);
+    emits('setCities', newCities);
+    newCity.value = '';
+  } else {
+    error.value = true;
+    setTimeout((): void => {
+      error.value = false;
+    }, 2000);
+  }
 }
 
 function removeCityHandler(city: string): void {
@@ -119,7 +141,12 @@ function removeCityHandler(city: string): void {
 
     div {
       display: flex;
+      gap: 10px;
     }
+  }
+
+  &__error {
+    color: red;
   }
 
   &__foot-form {
