@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
 
-const props = defineProps({
+defineProps({
   city: String,
   index: Number,
 });

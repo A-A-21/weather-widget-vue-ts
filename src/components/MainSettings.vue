@@ -40,11 +40,12 @@ const props = defineProps({
     required: true,
   },
 });
-const emits = defineEmits(['setViewWeather', 'setCities']);
 
 const newCity = ref<string>('');
 const error = ref<boolean>(false);
 const dragIndex = ref<number | null>(null);
+
+const emits = defineEmits(['setViewWeather', 'setCities']);
 
 function handleDragStart(index: number): void {
   dragIndex.value = index;

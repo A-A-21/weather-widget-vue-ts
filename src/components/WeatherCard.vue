@@ -33,11 +33,9 @@ import {
 import { IApiResponseGeo, IApiResponseWeather, IWeatherInfo } from '@/types/Weather';
 
 const props = defineProps({
-  city: String,
+  city: String || null,
   index: Number,
 });
-
-const emits = defineEmits(['setError', 'setViewWeather']);
 
 const pending = ref<boolean>(false);
 const place = ref<string>('');
@@ -49,6 +47,8 @@ const weatherInfo = ref<IWeatherInfo>({
   degree: 0,
   visibility: 0,
 });
+
+const emits = defineEmits(['setError', 'setViewWeather']);
 
 function getFormatedVisibility() {
   if (weatherInfo.value.visibility > 1000) {
@@ -77,7 +77,6 @@ async function getWeather({
   try {
     const weatherResponse: Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=5cb0432d478dac0bfabaaae53d6b5e94&units=metric`);
     const data: IApiResponseWeather = await weatherResponse.json();
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
