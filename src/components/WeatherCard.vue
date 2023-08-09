@@ -1,5 +1,6 @@
 <template>
-  <div class="weather-card">
+  <div v-if="pending" class="spinner"></div>
+  <div v-else class="weather-card">
     <button v-if="index === 0" @click="emits('setViewWeather')" class="settings">
       <img
         src="@/assets/icons8-привод-64.png"
@@ -38,6 +39,7 @@ const props = defineProps({
 
 const emits = defineEmits(['setError', 'setViewWeather']);
 
+const pending = ref<boolean>(false);
 const place = ref<string>('');
 const iconSrc = ref<string>('');
 const weatherInfo = ref<IWeatherInfo>({
@@ -107,12 +109,32 @@ async function initWeather(): Promise<void> {
   }
 }
 
-onMounted(() => {
-  initWeather();
+onMounted(async (): Promise<void> => {
+  pending.value = true;
+  await initWeather();
+  pending.value = false;
 });
 </script>
 
 <style scoped lang="scss">
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .weather-card {
   border: 1px solid blue;
   border-radius: 5px;
