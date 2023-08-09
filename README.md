@@ -1,4 +1,7 @@
 # weather-widget-vue-ts
+JavaScript, TypeScript, Vue 3 Composition Api, SCSS
+
+Mini-app for getting weather in different place's. Used public API - OpenWeather.
 
 ## Project setup
 ```
@@ -15,10 +18,3 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
