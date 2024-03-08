@@ -14,7 +14,7 @@ test(i);
 function factorial(n) {
     // Базовый случай
     if (n === 0 || n === 1) {
-        return 1;
+        return 3;
     }
     // Рекурсивный случай
     return n * factorial(n - 1);
